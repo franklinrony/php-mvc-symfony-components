@@ -19,9 +19,11 @@ namespace Symfony\Component\Validator;
  * element in the validation graph and the root element that was originally
  * passed to the validator. For example, take the following graph:
  *
- *     (Person)---(firstName: string)
- *          \
- *       (address: Address)---(street: string)
+ * <pre>
+ * (Person)---(firstName: string)
+ *      \
+ *   (address: Address)---(street: string)
+ * </pre>
  *
  * If the <tt>Person</tt> object is validated and validation fails for the
  * "firstName" property, the generated violation has the <tt>Person</tt>
@@ -44,7 +46,7 @@ interface ConstraintViolationInterface
      * Returns the raw violation message.
      *
      * The raw violation message contains placeholders for the parameters
-     * returned by {@link getParameters}. Typically you'll pass the
+     * returned by {@link getMessageParameters}. Typically you'll pass the
      * message template and parameters to a translation engine.
      *
      * @return string The raw violation message
@@ -58,8 +60,9 @@ interface ConstraintViolationInterface
      *               that appear in the message template
      *
      * @see getMessageTemplate()
+     * @deprecated since version 2.7, to be replaced by getParameters() in 3.0.
      */
-    public function getParameters();
+    public function getMessageParameters();
 
     /**
      * Returns a number for pluralizing the violation message.
@@ -76,8 +79,10 @@ interface ConstraintViolationInterface
      * pluralization form (in this case "choices").
      *
      * @return int|null The number to use to pluralize of the message
+     *
+     * @deprecated since version 2.7, to be replaced by getPlural() in 3.0.
      */
-    public function getPlural();
+    public function getMessagePluralization();
 
     /**
      * Returns the root element of the validation.
@@ -114,7 +119,7 @@ interface ConstraintViolationInterface
     /**
      * Returns a machine-digestible error code for the violation.
      *
-     * @return string|null The error code
+     * @return mixed The error code
      */
     public function getCode();
 }

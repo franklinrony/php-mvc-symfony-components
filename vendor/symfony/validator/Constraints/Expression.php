@@ -22,12 +22,6 @@ use Symfony\Component\Validator\Constraint;
  */
 class Expression extends Constraint
 {
-    const EXPRESSION_FAILED_ERROR = '6b3befbc-2f01-4ddf-be21-b57898905284';
-
-    protected static $errorNames = [
-        self::EXPRESSION_FAILED_ERROR => 'EXPRESSION_FAILED_ERROR',
-    ];
-
     public $message = 'This value is not valid.';
     public $expression;
 
@@ -44,7 +38,7 @@ class Expression extends Constraint
      */
     public function getRequiredOptions()
     {
-        return ['expression'];
+        return array('expression');
     }
 
     /**
@@ -52,7 +46,7 @@ class Expression extends Constraint
      */
     public function getTargets()
     {
-        return [self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT];
+        return array(self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT);
     }
 
     /**

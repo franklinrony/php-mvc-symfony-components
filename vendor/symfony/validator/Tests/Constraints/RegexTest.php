@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Component\Validator\Tests\Constraints;
+namespace Constraints;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\Regex;
@@ -28,37 +28,37 @@ class RegexTest extends TestCase
 
     public function provideHtmlPatterns()
     {
-        return [
+        return array(
             // HTML5 wraps the pattern in ^(?:pattern)$
-            ['/^[0-9]+$/', '[0-9]+'],
-            ['/[0-9]+$/', '.*[0-9]+'],
-            ['/^[0-9]+/', '[0-9]+.*'],
-            ['/[0-9]+/', '.*[0-9]+.*'],
+            array('/^[0-9]+$/', '[0-9]+'),
+            array('/[0-9]+$/', '.*[0-9]+'),
+            array('/^[0-9]+/', '[0-9]+.*'),
+            array('/[0-9]+/', '.*[0-9]+.*'),
             // We need a smart way to allow matching of patterns that contain
             // ^ and $ at various sub-clauses of an or-clause
             // .*(pattern).* seems to work correctly
-            ['/[0-9]$|[a-z]+/', '.*([0-9]$|[a-z]+).*'],
-            ['/[0-9]$|^[a-z]+/', '.*([0-9]$|^[a-z]+).*'],
-            ['/^[0-9]|[a-z]+$/', '.*(^[0-9]|[a-z]+$).*'],
+            array('/[0-9]$|[a-z]+/', '.*([0-9]$|[a-z]+).*'),
+            array('/[0-9]$|^[a-z]+/', '.*([0-9]$|^[a-z]+).*'),
+            array('/^[0-9]|[a-z]+$/', '.*(^[0-9]|[a-z]+$).*'),
             // Unescape escaped delimiters
-            ['/^[0-9]+\/$/', '[0-9]+/'],
-            ['#^[0-9]+\#$#', '[0-9]+#'],
+            array('/^[0-9]+\/$/', '[0-9]+/'),
+            array('#^[0-9]+\#$#', '[0-9]+#'),
             // Cannot be converted
-            ['/^[0-9]+$/i', null],
+            array('/^[0-9]+$/i', null),
 
             // Inverse matches are simple, just wrap in
             // ((?!pattern).)*
-            ['/^[0-9]+$/', '((?!^[0-9]+$).)*', false],
-            ['/[0-9]+$/', '((?![0-9]+$).)*', false],
-            ['/^[0-9]+/', '((?!^[0-9]+).)*', false],
-            ['/[0-9]+/', '((?![0-9]+).)*', false],
-            ['/[0-9]$|[a-z]+/', '((?![0-9]$|[a-z]+).)*', false],
-            ['/[0-9]$|^[a-z]+/', '((?![0-9]$|^[a-z]+).)*', false],
-            ['/^[0-9]|[a-z]+$/', '((?!^[0-9]|[a-z]+$).)*', false],
-            ['/^[0-9]+\/$/', '((?!^[0-9]+/$).)*', false],
-            ['#^[0-9]+\#$#', '((?!^[0-9]+#$).)*', false],
-            ['/^[0-9]+$/i', null, false],
-        ];
+            array('/^[0-9]+$/', '((?!^[0-9]+$).)*', false),
+            array('/[0-9]+$/', '((?![0-9]+$).)*', false),
+            array('/^[0-9]+/', '((?!^[0-9]+).)*', false),
+            array('/[0-9]+/', '((?![0-9]+).)*', false),
+            array('/[0-9]$|[a-z]+/', '((?![0-9]$|[a-z]+).)*', false),
+            array('/[0-9]$|^[a-z]+/', '((?![0-9]$|^[a-z]+).)*', false),
+            array('/^[0-9]|[a-z]+$/', '((?!^[0-9]|[a-z]+$).)*', false),
+            array('/^[0-9]+\/$/', '((?!^[0-9]+/$).)*', false),
+            array('#^[0-9]+\#$#', '((?!^[0-9]+#$).)*', false),
+            array('/^[0-9]+$/i', null, false),
+        );
     }
 
     /**
@@ -66,10 +66,10 @@ class RegexTest extends TestCase
      */
     public function testGetHtmlPattern($pattern, $htmlPattern, $match = true)
     {
-        $constraint = new Regex([
+        $constraint = new Regex(array(
             'pattern' => $pattern,
             'match' => $match,
-        ]);
+        ));
 
         $this->assertSame($pattern, $constraint->pattern);
         $this->assertSame($htmlPattern, $constraint->getHtmlPattern());
@@ -77,10 +77,10 @@ class RegexTest extends TestCase
 
     public function testGetCustomHtmlPattern()
     {
-        $constraint = new Regex([
+        $constraint = new Regex(array(
             'pattern' => '((?![0-9]$|[a-z]+).)*',
             'htmlPattern' => 'foobar',
-        ]);
+        ));
 
         $this->assertSame('((?![0-9]$|[a-z]+).)*', $constraint->pattern);
         $this->assertSame('foobar', $constraint->getHtmlPattern());

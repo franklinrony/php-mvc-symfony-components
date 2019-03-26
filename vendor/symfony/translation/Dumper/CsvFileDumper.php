@@ -26,12 +26,12 @@ class CsvFileDumper extends FileDumper
     /**
      * {@inheritdoc}
      */
-    public function formatCatalogue(MessageCatalogue $messages, $domain, array $options = [])
+    public function format(MessageCatalogue $messages, $domain = 'messages')
     {
-        $handle = fopen('php://memory', 'r+b');
+        $handle = fopen('php://memory', 'rb+');
 
         foreach ($messages->all($domain) as $source => $target) {
-            fputcsv($handle, [$source, $target], $this->delimiter, $this->enclosure);
+            fputcsv($handle, array($source, $target), $this->delimiter, $this->enclosure);
         }
 
         rewind($handle);

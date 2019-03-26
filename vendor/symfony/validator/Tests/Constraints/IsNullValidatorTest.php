@@ -13,10 +13,15 @@ namespace Symfony\Component\Validator\Tests\Constraints;
 
 use Symfony\Component\Validator\Constraints\IsNull;
 use Symfony\Component\Validator\Constraints\IsNullValidator;
-use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
+use Symfony\Component\Validator\Validation;
 
-class IsNullValidatorTest extends ConstraintValidatorTestCase
+class IsNullValidatorTest extends AbstractConstraintValidatorTest
 {
+    protected function getApiVersion()
+    {
+        return Validation::API_VERSION_2_5;
+    }
+
     protected function createValidator()
     {
         return new IsNullValidator();
@@ -34,29 +39,28 @@ class IsNullValidatorTest extends ConstraintValidatorTestCase
      */
     public function testInvalidValues($value, $valueAsString)
     {
-        $constraint = new IsNull([
+        $constraint = new IsNull(array(
             'message' => 'myMessage',
-        ]);
+        ));
 
         $this->validator->validate($value, $constraint);
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', $valueAsString)
-            ->setCode(IsNull::NOT_NULL_ERROR)
             ->assertRaised();
     }
 
     public function getInvalidValues()
     {
-        return [
-            [0, '0'],
-            [false, 'false'],
-            [true, 'true'],
-            ['', '""'],
-            ['foo bar', '"foo bar"'],
-            [new \DateTime(), 'object'],
-            [new \stdClass(), 'object'],
-            [[], 'array'],
-        ];
+        return array(
+            array(0, '0'),
+            array(false, 'false'),
+            array(true, 'true'),
+            array('', '""'),
+            array('foo bar', '"foo bar"'),
+            array(new \DateTime(), 'object'),
+            array(new \stdClass(), 'object'),
+            array(array(), 'array'),
+        );
     }
 }

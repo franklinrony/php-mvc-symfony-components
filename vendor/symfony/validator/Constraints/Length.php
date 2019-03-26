@@ -22,15 +22,13 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
  */
 class Length extends Constraint
 {
-    const TOO_SHORT_ERROR = '9ff3fdc4-b214-49db-8718-39c315e33d45';
-    const TOO_LONG_ERROR = 'd94b19cc-114f-4f44-9cc4-4138e80a87b9';
-    const INVALID_CHARACTERS_ERROR = '35e6a710-aa2e-4719-b58e-24b35749b767';
+    const TOO_SHORT_ERROR = 1;
+    const TOO_LONG_ERROR = 2;
 
-    protected static $errorNames = [
+    protected static $errorNames = array(
         self::TOO_SHORT_ERROR => 'TOO_SHORT_ERROR',
         self::TOO_LONG_ERROR => 'TOO_LONG_ERROR',
-        self::INVALID_CHARACTERS_ERROR => 'INVALID_CHARACTERS_ERROR',
-    ];
+    );
 
     public $maxMessage = 'This value is too long. It should have {{ limit }} character or less.|This value is too long. It should have {{ limit }} characters or less.';
     public $minMessage = 'This value is too short. It should have {{ limit }} character or more.|This value is too short. It should have {{ limit }} characters or more.';
@@ -42,17 +40,17 @@ class Length extends Constraint
 
     public function __construct($options = null)
     {
-        if (null !== $options && !\is_array($options)) {
-            $options = [
+        if (null !== $options && !is_array($options)) {
+            $options = array(
                 'min' => $options,
                 'max' => $options,
-            ];
+            );
         }
 
         parent::__construct($options);
 
         if (null === $this->min && null === $this->max) {
-            throw new MissingOptionsException(sprintf('Either option "min" or "max" must be given for constraint %s', __CLASS__), ['min', 'max']);
+            throw new MissingOptionsException(sprintf('Either option "min" or "max" must be given for constraint %s', __CLASS__), array('min', 'max'));
         }
     }
 }

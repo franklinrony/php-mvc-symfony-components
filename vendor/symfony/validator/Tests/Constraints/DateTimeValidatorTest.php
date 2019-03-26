@@ -13,10 +13,15 @@ namespace Symfony\Component\Validator\Tests\Constraints;
 
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\DateTimeValidator;
-use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
+use Symfony\Component\Validator\Validation;
 
-class DateTimeValidatorTest extends ConstraintValidatorTestCase
+class DateTimeValidatorTest extends AbstractConstraintValidatorTest
 {
+    protected function getApiVersion()
+    {
+        return Validation::API_VERSION_2_5;
+    }
+
     protected function createValidator()
     {
         return new DateTimeValidator();
@@ -43,13 +48,6 @@ class DateTimeValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testDateTimeImmutableClassIsValid()
-    {
-        $this->validator->validate(new \DateTimeImmutable(), new DateTime());
-
-        $this->assertNoViolation();
-    }
-
     /**
      * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
      */
@@ -58,54 +56,33 @@ class DateTimeValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate(new \stdClass(), new DateTime());
     }
 
-    public function testDateTimeWithDefaultFormat()
-    {
-        $this->validator->validate('1995-05-10 19:33:00', new DateTime());
-
-        $this->assertNoViolation();
-
-        $this->validator->validate('1995-03-24', new DateTime());
-
-        $this->buildViolation('This value is not a valid datetime.')
-            ->setParameter('{{ value }}', '"1995-03-24"')
-            ->setCode(DateTime::INVALID_FORMAT_ERROR)
-            ->assertRaised();
-    }
-
     /**
      * @dataProvider getValidDateTimes
      */
-    public function testValidDateTimes($format, $dateTime)
+    public function testValidDateTimes($dateTime)
     {
-        $constraint = new DateTime([
-            'format' => $format,
-        ]);
-
-        $this->validator->validate($dateTime, $constraint);
+        $this->validator->validate($dateTime, new DateTime());
 
         $this->assertNoViolation();
     }
 
     public function getValidDateTimes()
     {
-        return [
-            ['Y-m-d H:i:s e', '1995-03-24 00:00:00 UTC'],
-            ['Y-m-d H:i:s', '2010-01-01 01:02:03'],
-            ['Y/m/d H:i', '2010/01/01 01:02'],
-            ['F d, Y', 'December 31, 1999'],
-            ['d-m-Y', '10-05-1995'],
-        ];
+        return array(
+            array('2010-01-01 01:02:03'),
+            array('1955-12-12 00:00:00'),
+            array('2030-05-31 23:59:59'),
+        );
     }
 
     /**
      * @dataProvider getInvalidDateTimes
      */
-    public function testInvalidDateTimes($format, $dateTime, $code)
+    public function testInvalidDateTimes($dateTime, $code)
     {
-        $constraint = new DateTime([
+        $constraint = new DateTime(array(
             'message' => 'myMessage',
-            'format' => $format,
-        ]);
+        ));
 
         $this->validator->validate($dateTime, $constraint);
 
@@ -117,17 +94,17 @@ class DateTimeValidatorTest extends ConstraintValidatorTestCase
 
     public function getInvalidDateTimes()
     {
-        return [
-            ['Y-m-d', 'foobar', DateTime::INVALID_FORMAT_ERROR],
-            ['H:i', '00:00:00', DateTime::INVALID_FORMAT_ERROR],
-            ['Y-m-d', '2010-01-01 00:00', DateTime::INVALID_FORMAT_ERROR],
-            ['Y-m-d e', '2010-01-01 TCU', DateTime::INVALID_FORMAT_ERROR],
-            ['Y-m-d H:i:s', '2010-13-01 00:00:00', DateTime::INVALID_DATE_ERROR],
-            ['Y-m-d H:i:s', '2010-04-32 00:00:00', DateTime::INVALID_DATE_ERROR],
-            ['Y-m-d H:i:s', '2010-02-29 00:00:00', DateTime::INVALID_DATE_ERROR],
-            ['Y-m-d H:i:s', '2010-01-01 24:00:00', DateTime::INVALID_TIME_ERROR],
-            ['Y-m-d H:i:s', '2010-01-01 00:60:00', DateTime::INVALID_TIME_ERROR],
-            ['Y-m-d H:i:s', '2010-01-01 00:00:60', DateTime::INVALID_TIME_ERROR],
-        ];
+        return array(
+            array('foobar', DateTime::INVALID_FORMAT_ERROR),
+            array('2010-01-01', DateTime::INVALID_FORMAT_ERROR),
+            array('00:00:00', DateTime::INVALID_FORMAT_ERROR),
+            array('2010-01-01 00:00', DateTime::INVALID_FORMAT_ERROR),
+            array('2010-13-01 00:00:00', DateTime::INVALID_DATE_ERROR),
+            array('2010-04-32 00:00:00', DateTime::INVALID_DATE_ERROR),
+            array('2010-02-29 00:00:00', DateTime::INVALID_DATE_ERROR),
+            array('2010-01-01 24:00:00', DateTime::INVALID_TIME_ERROR),
+            array('2010-01-01 00:60:00', DateTime::INVALID_TIME_ERROR),
+            array('2010-01-01 00:00:60', DateTime::INVALID_TIME_ERROR),
+        );
     }
 }

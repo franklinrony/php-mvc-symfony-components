@@ -11,7 +11,9 @@
 
 namespace Symfony\Component\Validator;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface as ExecutionContextInterface2Dot5;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Validator\Violation\LegacyConstraintViolationBuilder;
 
 /**
  * Base class for constraint validators.
@@ -45,6 +47,51 @@ abstract class ConstraintValidator implements ConstraintValidatorInterface
     }
 
     /**
+     * Wrapper for {@link ExecutionContextInterface::buildViolation} that
+     * supports the 2.4 context API.
+     *
+     * @param string $message    The violation message
+     * @param array  $parameters The message parameters
+     *
+     * @return ConstraintViolationBuilderInterface The violation builder
+     *
+     * @deprecated since version 2.5, to be removed in 3.0.
+     */
+    protected function buildViolation($message, array $parameters = array())
+    {
+        @trigger_error('The '.__METHOD__.' is deprecated since Symfony 2.5 and will be removed in 3.0.', E_USER_DEPRECATED);
+
+        if ($this->context instanceof ExecutionContextInterface2Dot5) {
+            return $this->context->buildViolation($message, $parameters);
+        }
+
+        return new LegacyConstraintViolationBuilder($this->context, $message, $parameters);
+    }
+
+    /**
+     * Wrapper for {@link ExecutionContextInterface::buildViolation} that
+     * supports the 2.4 context API.
+     *
+     * @param ExecutionContextInterface $context    The context to use
+     * @param string                    $message    The violation message
+     * @param array                     $parameters The message parameters
+     *
+     * @return ConstraintViolationBuilderInterface The violation builder
+     *
+     * @deprecated since version 2.5, to be removed in 3.0.
+     */
+    protected function buildViolationInContext(ExecutionContextInterface $context, $message, array $parameters = array())
+    {
+        @trigger_error('The '.__METHOD__.' is deprecated since Symfony 2.5 and will be removed in 3.0.', E_USER_DEPRECATED);
+
+        if ($context instanceof ExecutionContextInterface2Dot5) {
+            return $context->buildViolation($message, $parameters);
+        }
+
+        return new LegacyConstraintViolationBuilder($context, $message, $parameters);
+    }
+
+    /**
      * Returns a string representation of the type of the value.
      *
      * This method should be used if you pass the type of a value as
@@ -58,7 +105,7 @@ abstract class ConstraintValidator implements ConstraintValidatorInterface
      */
     protected function formatTypeOf($value)
     {
-        return \is_object($value) ? \get_class($value) : \gettype($value);
+        return is_object($value) ? get_class($value) : gettype($value);
     }
 
     /**
@@ -85,7 +132,7 @@ abstract class ConstraintValidator implements ConstraintValidatorInterface
      */
     protected function formatValue($value, $format = 0)
     {
-        $isDateTime = $value instanceof \DateTimeInterface;
+        $isDateTime = $value instanceof \DateTime || $value instanceof \DateTimeInterface;
 
         if (($format & self::PRETTY_DATE) && $isDateTime) {
             if (class_exists('IntlDateFormatter')) {
@@ -107,7 +154,7 @@ abstract class ConstraintValidator implements ConstraintValidatorInterface
             return $value->format('Y-m-d H:i:s');
         }
 
-        if (\is_object($value)) {
+        if (is_object($value)) {
             if (($format & self::OBJECT_TO_STRING) && method_exists($value, '__toString')) {
                 return $value->__toString();
             }
@@ -115,15 +162,15 @@ abstract class ConstraintValidator implements ConstraintValidatorInterface
             return 'object';
         }
 
-        if (\is_array($value)) {
+        if (is_array($value)) {
             return 'array';
         }
 
-        if (\is_string($value)) {
+        if (is_string($value)) {
             return '"'.$value.'"';
         }
 
-        if (\is_resource($value)) {
+        if (is_resource($value)) {
             return 'resource';
         }
 

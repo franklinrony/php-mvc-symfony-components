@@ -13,10 +13,15 @@ namespace Symfony\Component\Validator\Tests\Constraints;
 
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotBlankValidator;
-use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
+use Symfony\Component\Validator\Validation;
 
-class NotBlankValidatorTest extends ConstraintValidatorTestCase
+class NotBlankValidatorTest extends AbstractConstraintValidatorTest
 {
+    protected function getApiVersion()
+    {
+        return Validation::API_VERSION_2_5;
+    }
+
     protected function createValidator()
     {
         return new NotBlankValidator();
@@ -34,68 +39,64 @@ class NotBlankValidatorTest extends ConstraintValidatorTestCase
 
     public function getValidValues()
     {
-        return [
-            ['foobar'],
-            [0],
-            [0.0],
-            ['0'],
-            [1234],
-        ];
+        return array(
+            array('foobar'),
+            array(0),
+            array(0.0),
+            array('0'),
+            array(1234),
+        );
     }
 
     public function testNullIsInvalid()
     {
-        $constraint = new NotBlank([
+        $constraint = new NotBlank(array(
             'message' => 'myMessage',
-        ]);
+        ));
 
         $this->validator->validate(null, $constraint);
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', 'null')
-            ->setCode(NotBlank::IS_BLANK_ERROR)
             ->assertRaised();
     }
 
     public function testBlankIsInvalid()
     {
-        $constraint = new NotBlank([
+        $constraint = new NotBlank(array(
             'message' => 'myMessage',
-        ]);
+        ));
 
         $this->validator->validate('', $constraint);
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', '""')
-            ->setCode(NotBlank::IS_BLANK_ERROR)
             ->assertRaised();
     }
 
     public function testFalseIsInvalid()
     {
-        $constraint = new NotBlank([
+        $constraint = new NotBlank(array(
             'message' => 'myMessage',
-        ]);
+        ));
 
         $this->validator->validate(false, $constraint);
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', 'false')
-            ->setCode(NotBlank::IS_BLANK_ERROR)
             ->assertRaised();
     }
 
     public function testEmptyArrayIsInvalid()
     {
-        $constraint = new NotBlank([
+        $constraint = new NotBlank(array(
             'message' => 'myMessage',
-        ]);
+        ));
 
-        $this->validator->validate([], $constraint);
+        $this->validator->validate(array(), $constraint);
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', 'array')
-            ->setCode(NotBlank::IS_BLANK_ERROR)
             ->assertRaised();
     }
 }

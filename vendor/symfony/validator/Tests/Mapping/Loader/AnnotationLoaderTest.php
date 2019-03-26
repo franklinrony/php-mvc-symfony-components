@@ -17,10 +17,9 @@ use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Collection;
-use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
-use Symfony\Component\Validator\Constraints\Valid;
+use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Validator\Tests\Fixtures\ConstraintA;
@@ -52,25 +51,23 @@ class AnnotationLoaderTest extends TestCase
         $loader->loadClassMetadata($metadata);
 
         $expected = new ClassMetadata('Symfony\Component\Validator\Tests\Fixtures\Entity');
-        $expected->setGroupSequence(['Foo', 'Entity']);
+        $expected->setGroupSequence(array('Foo', 'Entity'));
         $expected->addConstraint(new ConstraintA());
-        $expected->addConstraint(new Callback(['Symfony\Component\Validator\Tests\Fixtures\CallbackClass', 'callback']));
-        $expected->addConstraint(new Callback(['callback' => 'validateMe', 'payload' => 'foo']));
+        $expected->addConstraint(new Callback(array('Symfony\Component\Validator\Tests\Fixtures\CallbackClass', 'callback')));
+        $expected->addConstraint(new Callback(array('callback' => 'validateMe', 'payload' => 'foo')));
         $expected->addConstraint(new Callback('validateMeStatic'));
         $expected->addPropertyConstraint('firstName', new NotNull());
-        $expected->addPropertyConstraint('firstName', new Range(['min' => 3]));
-        $expected->addPropertyConstraint('firstName', new All([new NotNull(), new Range(['min' => 3])]));
-        $expected->addPropertyConstraint('firstName', new All(['constraints' => [new NotNull(), new Range(['min' => 3])]]));
-        $expected->addPropertyConstraint('firstName', new Collection(['fields' => [
-            'foo' => [new NotNull(), new Range(['min' => 3])],
-            'bar' => new Range(['min' => 5]),
-        ]]));
-        $expected->addPropertyConstraint('firstName', new Choice([
+        $expected->addPropertyConstraint('firstName', new Range(array('min' => 3)));
+        $expected->addPropertyConstraint('firstName', new All(array(new NotNull(), new Range(array('min' => 3)))));
+        $expected->addPropertyConstraint('firstName', new All(array('constraints' => array(new NotNull(), new Range(array('min' => 3))))));
+        $expected->addPropertyConstraint('firstName', new Collection(array('fields' => array(
+            'foo' => array(new NotNull(), new Range(array('min' => 3))),
+            'bar' => new Range(array('min' => 5)),
+        ))));
+        $expected->addPropertyConstraint('firstName', new Choice(array(
             'message' => 'Must be one of %choices%',
-            'choices' => ['A', 'B'],
-        ]));
-        $expected->addPropertyConstraint('childA', new Valid());
-        $expected->addPropertyConstraint('childB', new Valid());
+            'choices' => array('A', 'B'),
+        )));
         $expected->addGetterConstraint('lastName', new NotNull());
         $expected->addGetterMethodConstraint('valid', 'isValid', new IsTrue());
         $expected->addGetterConstraint('permissions', new IsTrue());
@@ -124,25 +121,23 @@ class AnnotationLoaderTest extends TestCase
         $expected = new ClassMetadata('Symfony\Component\Validator\Tests\Fixtures\Entity');
         $expected->mergeConstraints($expected_parent);
 
-        $expected->setGroupSequence(['Foo', 'Entity']);
+        $expected->setGroupSequence(array('Foo', 'Entity'));
         $expected->addConstraint(new ConstraintA());
-        $expected->addConstraint(new Callback(['Symfony\Component\Validator\Tests\Fixtures\CallbackClass', 'callback']));
-        $expected->addConstraint(new Callback(['callback' => 'validateMe', 'payload' => 'foo']));
+        $expected->addConstraint(new Callback(array('Symfony\Component\Validator\Tests\Fixtures\CallbackClass', 'callback')));
+        $expected->addConstraint(new Callback(array('callback' => 'validateMe', 'payload' => 'foo')));
         $expected->addConstraint(new Callback('validateMeStatic'));
         $expected->addPropertyConstraint('firstName', new NotNull());
-        $expected->addPropertyConstraint('firstName', new Range(['min' => 3]));
-        $expected->addPropertyConstraint('firstName', new All([new NotNull(), new Range(['min' => 3])]));
-        $expected->addPropertyConstraint('firstName', new All(['constraints' => [new NotNull(), new Range(['min' => 3])]]));
-        $expected->addPropertyConstraint('firstName', new Collection(['fields' => [
-            'foo' => [new NotNull(), new Range(['min' => 3])],
-            'bar' => new Range(['min' => 5]),
-        ]]));
-        $expected->addPropertyConstraint('firstName', new Choice([
+        $expected->addPropertyConstraint('firstName', new Range(array('min' => 3)));
+        $expected->addPropertyConstraint('firstName', new All(array(new NotNull(), new Range(array('min' => 3)))));
+        $expected->addPropertyConstraint('firstName', new All(array('constraints' => array(new NotNull(), new Range(array('min' => 3))))));
+        $expected->addPropertyConstraint('firstName', new Collection(array('fields' => array(
+            'foo' => array(new NotNull(), new Range(array('min' => 3))),
+            'bar' => new Range(array('min' => 5)),
+        ))));
+        $expected->addPropertyConstraint('firstName', new Choice(array(
             'message' => 'Must be one of %choices%',
-            'choices' => ['A', 'B'],
-        ]));
-        $expected->addPropertyConstraint('childA', new Valid());
-        $expected->addPropertyConstraint('childB', new Valid());
+            'choices' => array('A', 'B'),
+        )));
         $expected->addGetterConstraint('lastName', new NotNull());
         $expected->addGetterMethodConstraint('valid', 'isValid', new IsTrue());
         $expected->addGetterConstraint('permissions', new IsTrue());

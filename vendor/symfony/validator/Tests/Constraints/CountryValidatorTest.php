@@ -14,10 +14,15 @@ namespace Symfony\Component\Validator\Tests\Constraints;
 use Symfony\Component\Intl\Util\IntlTestHelper;
 use Symfony\Component\Validator\Constraints\Country;
 use Symfony\Component\Validator\Constraints\CountryValidator;
-use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
+use Symfony\Component\Validator\Validation;
 
-class CountryValidatorTest extends ConstraintValidatorTestCase
+class CountryValidatorTest extends AbstractConstraintValidatorTest
 {
+    protected function getApiVersion()
+    {
+        return Validation::API_VERSION_2_5;
+    }
+
     protected function createValidator()
     {
         return new CountryValidator();
@@ -57,11 +62,11 @@ class CountryValidatorTest extends ConstraintValidatorTestCase
 
     public function getValidCountries()
     {
-        return [
-            ['GB'],
-            ['AT'],
-            ['MY'],
-        ];
+        return array(
+            array('GB'),
+            array('AT'),
+            array('MY'),
+        );
     }
 
     /**
@@ -69,24 +74,23 @@ class CountryValidatorTest extends ConstraintValidatorTestCase
      */
     public function testInvalidCountries($country)
     {
-        $constraint = new Country([
+        $constraint = new Country(array(
             'message' => 'myMessage',
-        ]);
+        ));
 
         $this->validator->validate($country, $constraint);
 
         $this->buildViolation('myMessage')
             ->setParameter('{{ value }}', '"'.$country.'"')
-            ->setCode(Country::NO_SUCH_COUNTRY_ERROR)
             ->assertRaised();
     }
 
     public function getInvalidCountries()
     {
-        return [
-            ['foobar'],
-            ['EN'],
-        ];
+        return array(
+            array('foobar'),
+            array('EN'),
+        );
     }
 
     public function testValidateUsingCountrySpecificLocale()

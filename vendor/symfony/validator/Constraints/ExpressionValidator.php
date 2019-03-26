@@ -12,8 +12,12 @@
 namespace Symfony\Component\Validator\Constraints;
 
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\RuntimeException;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
@@ -23,11 +27,19 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class ExpressionValidator extends ConstraintValidator
 {
+    private $propertyAccessor;
+
+    /**
+     * @var ExpressionLanguage
+     */
     private $expressionLanguage;
 
-    public function __construct($propertyAccessor = null, ExpressionLanguage $expressionLanguage = null)
+    /**
+     * @throws UnexpectedTypeException If the property accessor is invalid
+     */
+    public function __construct(PropertyAccessorInterface $propertyAccessor = null)
     {
-        $this->expressionLanguage = $expressionLanguage;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -39,15 +51,40 @@ class ExpressionValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\Expression');
         }
 
-        $variables = [];
-        $variables['value'] = $value;
-        $variables['this'] = $this->context->getObject();
+        $variables = array();
+
+        // Symfony 2.5+
+        if ($this->context instanceof ExecutionContextInterface) {
+            $variables['value'] = $value;
+            $variables['this'] = $this->context->getObject();
+        } elseif (null === $this->context->getPropertyName()) {
+            $variables['value'] = $value;
+            $variables['this'] = $value;
+        } else {
+            $root = $this->context->getRoot();
+            $variables['value'] = $value;
+
+            if (is_object($root)) {
+                // Extract the object that the property belongs to from the object
+                // graph
+                $path = new PropertyPath($this->context->getPropertyPath());
+                $parentPath = $path->getParent();
+                $variables['this'] = $parentPath ? $this->getPropertyAccessor()->getValue($root, $parentPath) : $root;
+            } else {
+                $variables['this'] = null;
+            }
+        }
 
         if (!$this->getExpressionLanguage()->evaluate($constraint->expression, $variables)) {
-            $this->context->buildViolation($constraint->message)
-                ->setParameter('{{ value }}', $this->formatValue($value, self::OBJECT_TO_STRING))
-                ->setCode(Expression::EXPRESSION_FAILED_ERROR)
-                ->addViolation();
+            if ($this->context instanceof ExecutionContextInterface) {
+                $this->context->buildViolation($constraint->message)
+                    ->setParameter('{{ value }}', $this->formatValue($value, self::OBJECT_TO_STRING))
+                    ->addViolation();
+            } else {
+                $this->buildViolation($constraint->message)
+                    ->setParameter('{{ value }}', $this->formatValue($value, self::OBJECT_TO_STRING))
+                    ->addViolation();
+            }
         }
     }
 
@@ -61,5 +98,17 @@ class ExpressionValidator extends ConstraintValidator
         }
 
         return $this->expressionLanguage;
+    }
+
+    private function getPropertyAccessor()
+    {
+        if (null === $this->propertyAccessor) {
+            if (!class_exists('Symfony\Component\PropertyAccess\PropertyAccess')) {
+                throw new RuntimeException('Unable to use expressions as the Symfony PropertyAccess component is not installed.');
+            }
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        }
+
+        return $this->propertyAccessor;
     }
 }

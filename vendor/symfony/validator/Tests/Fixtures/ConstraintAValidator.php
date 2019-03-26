@@ -13,7 +13,7 @@ namespace Symfony\Component\Validator\Tests\Fixtures;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\ExecutionContextInterface;
 
 class ConstraintAValidator extends ConstraintValidator
 {
@@ -29,7 +29,7 @@ class ConstraintAValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if ('VALID' != $value) {
-            $this->context->addViolation('message', ['param' => 'value']);
+            $this->context->addViolation('message', array('param' => 'value'));
 
             return;
         }

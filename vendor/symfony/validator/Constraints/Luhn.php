@@ -25,13 +25,13 @@ use Symfony\Component\Validator\Constraint;
  */
 class Luhn extends Constraint
 {
-    const INVALID_CHARACTERS_ERROR = 'dfad6d23-1b74-4374-929b-5cbb56fc0d9e';
-    const CHECKSUM_FAILED_ERROR = '4d760774-3f50-4cd5-a6d5-b10a3299d8d3';
+    const INVALID_CHARACTERS_ERROR = 1;
+    const CHECKSUM_FAILED_ERROR = 2;
 
-    protected static $errorNames = [
+    protected static $errorNames = array(
         self::INVALID_CHARACTERS_ERROR => 'INVALID_CHARACTERS_ERROR',
         self::CHECKSUM_FAILED_ERROR => 'CHECKSUM_FAILED_ERROR',
-    ];
+    );
 
     public $message = 'Invalid card number.';
 }

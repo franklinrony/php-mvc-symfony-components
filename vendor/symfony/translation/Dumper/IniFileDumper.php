@@ -23,7 +23,7 @@ class IniFileDumper extends FileDumper
     /**
      * {@inheritdoc}
      */
-    public function formatCatalogue(MessageCatalogue $messages, $domain, array $options = [])
+    public function format(MessageCatalogue $messages, $domain = 'messages')
     {
         $output = '';
 

@@ -8,9 +8,14 @@
     }
   },
   "require": {
-    "symfony/validator": "^3.4",
+    "symfony/form": "2.7.*",
+    "symfony/validator": "2.7.*",
+    "symfony/translation": "2.7.*",
+    "symfony/twig-bridge": "2.7.*",
+    "symfony/security-csrf": "2.7.*",
     "bramus/router": "~1.4",
-    "aura/router": "^3.1",
-    "altorouter/altorouter": "1.1.0"
+    "robmorgan/phinx": "^0.10.6",
+    "twig/twig": "^1.0",
+    "symfony/http-foundation": "^3.4"
   }
 }

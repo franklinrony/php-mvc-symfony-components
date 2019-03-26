@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+     <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/main.css') }}">
+
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Formulario Registro</title>
+</head>
+<body>
+<div id="wrapper" class="container-fluid">
+    <div class="row">
+        {% for error in errores  %}
+            <ul>
+                <li>{{ error.propertyPath }} {{ error.message }}</li>
+            </ul>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <br/>
+        <form id="formulario-registro" method="post" action="/registro2/">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" value="" placeholder="Ingresa tu nombre">
+            </div>
+            <div class="form-group">
+                <label for="apellidos">Apellidos</label>
+                <input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="Escribe tus apellidos">
+            </div>
+            <div class="form-group">
+                <label for="edad">Edad</label>
+                <input type="text" class="form-control" id="edad" name="edad" placeholder="Escribe tu edad">
+            </div>
+            <div class="form-group">
+                <label for="email">Correo Electronico</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Escribe tu Correo Eelctronico">
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+            <div class="form-group">
+                <label for="usuario">Usuario</label>
+                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Escribe tu usuario">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Escribe tu Password">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

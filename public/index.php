@@ -9,11 +9,14 @@
  * Fecha:
  */
 require '/../'.'vendor/autoload.php';
-
-use pdes\paquete_a\ArchivoA;
-use pdes\paquete_b\ArchivoB;
-use pdes\model\usuario;
+require '/../'.'twig.php';
 use Bramus\Router\Router;
+
+//Mostrar errores en el navegador
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 //Creear instancia del router
 $router = new Router();
 
@@ -30,19 +33,8 @@ $router->get('/', function () {
 
 $router->setNamespace('\pdes\controller');
 $router->get('/registro/', 'UsuarioController@registro');
-
+$router->post('/registro/','UsuarioController@registro');
 $router->run();
 
-/*
-$prueba= new ArchivoA();
-$prueba->setName('Rony');
-$pruebaB= new ArchivoB();
-$pruebaB->setA('Cortez');
 
-$usuario=new usuario();
-$usuario->setDireccion('6 avenida norte 53');
-echo $prueba->getName();
-echo $pruebaB->getA();
-echo $usuario->getDireccion();
-echo __DIR__;*/
 ?>

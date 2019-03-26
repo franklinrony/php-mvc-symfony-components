@@ -26,6 +26,6 @@ class ConstraintWithValueAsDefault extends Constraint
 
     public function getTargets()
     {
-        return [self::PROPERTY_CONSTRAINT, self::CLASS_CONSTRAINT];
+        return array(self::PROPERTY_CONSTRAINT, self::CLASS_CONSTRAINT);
     }
 }

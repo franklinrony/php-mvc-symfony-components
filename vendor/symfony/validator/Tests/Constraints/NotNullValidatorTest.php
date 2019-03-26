@@ -13,10 +13,15 @@ namespace Symfony\Component\Validator\Tests\Constraints;
 
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\NotNullValidator;
-use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
+use Symfony\Component\Validator\Validation;
 
-class NotNullValidatorTest extends ConstraintValidatorTestCase
+class NotNullValidatorTest extends AbstractConstraintValidatorTest
 {
+    protected function getApiVersion()
+    {
+        return Validation::API_VERSION_2_5;
+    }
+
     protected function createValidator()
     {
         return new NotNullValidator();
@@ -34,25 +39,22 @@ class NotNullValidatorTest extends ConstraintValidatorTestCase
 
     public function getValidValues()
     {
-        return [
-            [0],
-            [false],
-            [true],
-            [''],
-        ];
+        return array(
+            array(0),
+            array(false),
+            array(true),
+            array(''),
+        );
     }
 
     public function testNullIsInvalid()
     {
-        $constraint = new NotNull([
+        $constraint = new NotNull(array(
             'message' => 'myMessage',
-        ]);
+        ));
 
         $this->validator->validate(null, $constraint);
 
-        $this->buildViolation('myMessage')
-            ->setParameter('{{ value }}', 'null')
-            ->setCode(NotNull::IS_NULL_ERROR)
-            ->assertRaised();
+        $this->buildViolation('myMessage')->assertRaised();
     }
 }

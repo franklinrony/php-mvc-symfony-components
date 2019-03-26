@@ -22,7 +22,7 @@ class GroupSequenceProviderEntity implements GroupSequenceProviderInterface
     public $firstName;
     public $lastName;
 
-    protected $sequence = [];
+    protected $sequence = array();
 
     public function __construct($sequence)
     {

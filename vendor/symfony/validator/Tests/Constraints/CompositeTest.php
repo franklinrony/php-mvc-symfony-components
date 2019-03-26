@@ -39,44 +39,44 @@ class CompositeTest extends TestCase
 {
     public function testMergeNestedGroupsIfNoExplicitParentGroup()
     {
-        $constraint = new ConcreteComposite([
-            new NotNull(['groups' => 'Default']),
-            new NotBlank(['groups' => ['Default', 'Strict']]),
-        ]);
+        $constraint = new ConcreteComposite(array(
+            new NotNull(array('groups' => 'Default')),
+            new NotBlank(array('groups' => array('Default', 'Strict'))),
+        ));
 
-        $this->assertEquals(['Default', 'Strict'], $constraint->groups);
-        $this->assertEquals(['Default'], $constraint->constraints[0]->groups);
-        $this->assertEquals(['Default', 'Strict'], $constraint->constraints[1]->groups);
+        $this->assertEquals(array('Default', 'Strict'), $constraint->groups);
+        $this->assertEquals(array('Default'), $constraint->constraints[0]->groups);
+        $this->assertEquals(array('Default', 'Strict'), $constraint->constraints[1]->groups);
     }
 
     public function testSetImplicitNestedGroupsIfExplicitParentGroup()
     {
-        $constraint = new ConcreteComposite([
-            'constraints' => [
+        $constraint = new ConcreteComposite(array(
+            'constraints' => array(
                 new NotNull(),
                 new NotBlank(),
-            ],
-            'groups' => ['Default', 'Strict'],
-        ]);
+            ),
+            'groups' => array('Default', 'Strict'),
+        ));
 
-        $this->assertEquals(['Default', 'Strict'], $constraint->groups);
-        $this->assertEquals(['Default', 'Strict'], $constraint->constraints[0]->groups);
-        $this->assertEquals(['Default', 'Strict'], $constraint->constraints[1]->groups);
+        $this->assertEquals(array('Default', 'Strict'), $constraint->groups);
+        $this->assertEquals(array('Default', 'Strict'), $constraint->constraints[0]->groups);
+        $this->assertEquals(array('Default', 'Strict'), $constraint->constraints[1]->groups);
     }
 
     public function testExplicitNestedGroupsMustBeSubsetOfExplicitParentGroups()
     {
-        $constraint = new ConcreteComposite([
-            'constraints' => [
-                new NotNull(['groups' => 'Default']),
-                new NotBlank(['groups' => 'Strict']),
-            ],
-            'groups' => ['Default', 'Strict'],
-        ]);
+        $constraint = new ConcreteComposite(array(
+            'constraints' => array(
+                new NotNull(array('groups' => 'Default')),
+                new NotBlank(array('groups' => 'Strict')),
+            ),
+            'groups' => array('Default', 'Strict'),
+        ));
 
-        $this->assertEquals(['Default', 'Strict'], $constraint->groups);
-        $this->assertEquals(['Default'], $constraint->constraints[0]->groups);
-        $this->assertEquals(['Strict'], $constraint->constraints[1]->groups);
+        $this->assertEquals(array('Default', 'Strict'), $constraint->groups);
+        $this->assertEquals(array('Default'), $constraint->constraints[0]->groups);
+        $this->assertEquals(array('Strict'), $constraint->constraints[1]->groups);
     }
 
     /**
@@ -84,26 +84,26 @@ class CompositeTest extends TestCase
      */
     public function testFailIfExplicitNestedGroupsNotSubsetOfExplicitParentGroups()
     {
-        new ConcreteComposite([
-            'constraints' => [
-                new NotNull(['groups' => ['Default', 'Foobar']]),
-            ],
-            'groups' => ['Default', 'Strict'],
-        ]);
+        new ConcreteComposite(array(
+            'constraints' => array(
+                new NotNull(array('groups' => array('Default', 'Foobar'))),
+            ),
+            'groups' => array('Default', 'Strict'),
+        ));
     }
 
     public function testImplicitGroupNamesAreForwarded()
     {
-        $constraint = new ConcreteComposite([
-            new NotNull(['groups' => 'Default']),
-            new NotBlank(['groups' => 'Strict']),
-        ]);
+        $constraint = new ConcreteComposite(array(
+            new NotNull(array('groups' => 'Default')),
+            new NotBlank(array('groups' => 'Strict')),
+        ));
 
         $constraint->addImplicitGroupName('ImplicitGroup');
 
-        $this->assertEquals(['Default', 'Strict', 'ImplicitGroup'], $constraint->groups);
-        $this->assertEquals(['Default', 'ImplicitGroup'], $constraint->constraints[0]->groups);
-        $this->assertEquals(['Strict'], $constraint->constraints[1]->groups);
+        $this->assertEquals(array('Default', 'Strict', 'ImplicitGroup'), $constraint->groups);
+        $this->assertEquals(array('Default', 'ImplicitGroup'), $constraint->constraints[0]->groups);
+        $this->assertEquals(array('Strict'), $constraint->constraints[1]->groups);
     }
 
     public function testSingleConstraintsAccepted()
@@ -111,7 +111,7 @@ class CompositeTest extends TestCase
         $nestedConstraint = new NotNull();
         $constraint = new ConcreteComposite($nestedConstraint);
 
-        $this->assertEquals([$nestedConstraint], $constraint->constraints);
+        $this->assertEquals(array($nestedConstraint), $constraint->constraints);
     }
 
     /**
@@ -119,10 +119,10 @@ class CompositeTest extends TestCase
      */
     public function testFailIfNoConstraint()
     {
-        new ConcreteComposite([
-            new NotNull(['groups' => 'Default']),
+        new ConcreteComposite(array(
+            new NotNull(array('groups' => 'Default')),
             'NotBlank',
-        ]);
+        ));
     }
 
     /**
@@ -130,10 +130,10 @@ class CompositeTest extends TestCase
      */
     public function testFailIfNoConstraintObject()
     {
-        new ConcreteComposite([
-            new NotNull(['groups' => 'Default']),
+        new ConcreteComposite(array(
+            new NotNull(array('groups' => 'Default')),
             new \ArrayObject(),
-        ]);
+        ));
     }
 
     /**
@@ -141,8 +141,8 @@ class CompositeTest extends TestCase
      */
     public function testValidCantBeNested()
     {
-        new ConcreteComposite([
+        new ConcreteComposite(array(
             new Valid(),
-        ]);
+        ));
     }
 }

@@ -14,7 +14,9 @@ namespace Symfony\Component\Validator\Mapping;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Traverse;
 use Symfony\Component\Validator\Constraints\Valid;
+use Symfony\Component\Validator\Exception\BadMethodCallException;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
+use Symfony\Component\Validator\ValidationVisitorInterface;
 
 /**
  * A generic container of {@link Constraint} objects.
@@ -32,7 +34,7 @@ class GenericMetadata implements MetadataInterface
      *           class' serialized representation. Do not access it. Use
      *           {@link getConstraints()} and {@link findConstraints()} instead.
      */
-    public $constraints = [];
+    public $constraints = array();
 
     /**
      * @var array
@@ -41,7 +43,7 @@ class GenericMetadata implements MetadataInterface
      *           class' serialized representation. Do not access it. Use
      *           {@link findConstraints()} instead.
      */
-    public $constraintsByGroup = [];
+    public $constraintsByGroup = array();
 
     /**
      * The strategy for cascading objects.
@@ -80,12 +82,12 @@ class GenericMetadata implements MetadataInterface
      */
     public function __sleep()
     {
-        return [
+        return array(
             'constraints',
             'constraintsByGroup',
             'cascadingStrategy',
             'traversalStrategy',
-        ];
+        );
     }
 
     /**
@@ -95,8 +97,8 @@ class GenericMetadata implements MetadataInterface
     {
         $constraints = $this->constraints;
 
-        $this->constraints = [];
-        $this->constraintsByGroup = [];
+        $this->constraints = array();
+        $this->constraintsByGroup = array();
 
         foreach ($constraints as $constraint) {
             $this->addConstraint(clone $constraint);
@@ -108,10 +110,13 @@ class GenericMetadata implements MetadataInterface
      *
      * If the constraint {@link Valid} is added, the cascading strategy will be
      * changed to {@link CascadingStrategy::CASCADE}. Depending on the
-     * $traverse property of that constraint, the traversal strategy
+     * properties $traverse and $deep of that constraint, the traversal strategy
      * will be set to one of the following:
      *
-     *  - {@link TraversalStrategy::IMPLICIT} if $traverse is enabled
+     *  - {@link TraversalStrategy::IMPLICIT} if $traverse is enabled and $deep
+     *    is enabled
+     *  - {@link TraversalStrategy::IMPLICIT} | {@link TraversalStrategy::STOP_RECURSION}
+     *    if $traverse is enabled, but $deep is disabled
      *  - {@link TraversalStrategy::NONE} if $traverse is disabled
      *
      * @return $this
@@ -122,14 +127,23 @@ class GenericMetadata implements MetadataInterface
     public function addConstraint(Constraint $constraint)
     {
         if ($constraint instanceof Traverse) {
-            throw new ConstraintDefinitionException(sprintf('The constraint "%s" can only be put on classes. Please use "Symfony\Component\Validator\Constraints\Valid" instead.', \get_class($constraint)));
+            throw new ConstraintDefinitionException(sprintf(
+                'The constraint "%s" can only be put on classes. Please use '.
+                '"Symfony\Component\Validator\Constraints\Valid" instead.',
+                get_class($constraint)
+            ));
         }
 
-        if ($constraint instanceof Valid && null === $constraint->groups) {
+        if ($constraint instanceof Valid) {
             $this->cascadingStrategy = CascadingStrategy::CASCADE;
 
             if ($constraint->traverse) {
+                // Traverse unless the value is not traversable
                 $this->traversalStrategy = TraversalStrategy::IMPLICIT;
+
+                if (!$constraint->deep) {
+                    $this->traversalStrategy |= TraversalStrategy::STOP_RECURSION;
+                }
             } else {
                 $this->traversalStrategy = TraversalStrategy::NONE;
             }
@@ -177,7 +191,7 @@ class GenericMetadata implements MetadataInterface
      */
     public function hasConstraints()
     {
-        return \count($this->constraints) > 0;
+        return count($this->constraints) > 0;
     }
 
     /**
@@ -189,7 +203,7 @@ class GenericMetadata implements MetadataInterface
     {
         return isset($this->constraintsByGroup[$group])
             ? $this->constraintsByGroup[$group]
-            : [];
+            : array();
     }
 
     /**
@@ -206,5 +220,22 @@ class GenericMetadata implements MetadataInterface
     public function getTraversalStrategy()
     {
         return $this->traversalStrategy;
+    }
+
+    /**
+     * Exists for compatibility with the deprecated
+     * {@link Symfony\Component\Validator\MetadataInterface}.
+     *
+     * Should not be used.
+     *
+     * Implemented for backward compatibility with Symfony < 2.5.
+     *
+     * @throws BadMethodCallException
+     *
+     * @deprecated since version 2.5, to be removed in 3.0.
+     */
+    public function accept(ValidationVisitorInterface $visitor, $value, $group, $propertyPath)
+    {
+        throw new BadMethodCallException('Not supported.');
     }
 }

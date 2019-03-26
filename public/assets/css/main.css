@@ -1,0 +1,286 @@
+body {
+    background-color: #D0E0EB;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#wrapper {
+    background-color: #EBF7F8;
+    width: 96%;
+    /*Centrar el contenido*/
+    margin: 10px auto;
+    margin-top: 20px;
+}
+
+#header {
+    background-color: #0E4EAD;
+    min-height: 150px;
+    padding: 10px;
+}
+
+#header h1 {
+    text-align: center;
+    color: white;
+}
+
+#header h3 {
+    text-align: center;
+    color: white;
+}
+
+#nav{
+
+}
+#sidebar {
+    background-color: #EBF7F8;
+    /*float: left;*/
+    padding: 20px;
+}
+
+#content {
+    background-color: #FFFFFF;
+   /* float: right;*/
+    min-height: 100px;
+    padding: 20px;
+}
+
+#footer {
+    background-color: #0E4EAD;
+    color: white;
+    min-height: 100px;
+    /*Hace que el div quede abajo de #content y #sidebar*/
+    clear: both;
+    padding: 20px;
+
+}
+/* --------------------------------------*/
+/*Fix Columnas igual tamaño*/
+.inside {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.inside-full-height {
+    /*
+    // if you want to give content full height give him height: 100%;
+    // with content full height you can't apply margins to the content
+    // content full height does not work in ie http://stackoverflow.com/questions/27384433/ie-display-table-cell-child-ignores-height-100
+    */
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+/* columns of same height styles */
+
+.row-height {
+    display: table;
+    table-layout: fixed;
+    height: 100%;
+    width: 100%;
+}
+.col-height {
+    display: table-cell;
+    float: none;
+    height: 100%;
+}
+.col-top {
+    vertical-align: top;
+}
+.col-middle {
+    vertical-align: middle;
+}
+.col-bottom {
+    vertical-align: bottom;
+}
+
+@media (min-width: 480px) {
+    .row-xs-height {
+        display: table;
+        table-layout: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    .col-xs-height {
+        display: table-cell;
+        float: none;
+        height: 100%;
+    }
+    .col-xs-top {
+        vertical-align: top;
+    }
+    .col-xs-middle {
+        vertical-align: middle;
+    }
+    .col-xs-bottom {
+        vertical-align: bottom;
+    }
+}
+
+@media (min-width: 768px) {
+    .row-sm-height {
+        display: table;
+        table-layout: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    .col-sm-height {
+        display: table-cell;
+        float: none;
+        height: 100%;
+    }
+    .col-sm-top {
+        vertical-align: top;
+    }
+    .col-sm-middle {
+        vertical-align: middle;
+    }
+    .col-sm-bottom {
+        vertical-align: bottom;
+    }
+}
+
+@media (min-width: 992px) {
+    .row-md-height {
+        display: table;
+        table-layout: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    .col-md-height {
+        display: table-cell;
+        float: none;
+        height: 100%;
+    }
+    .col-md-top {
+        vertical-align: top;
+    }
+    .col-md-middle {
+        vertical-align: middle;
+    }
+    .col-md-bottom {
+        vertical-align: bottom;
+    }
+}
+
+@media (min-width: 1200px) {
+    .row-lg-height {
+        display: table;
+        table-layout: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    .col-lg-height {
+        display: table-cell;
+        float: none;
+        height: 100%;
+    }
+    .col-lg-top {
+        vertical-align: top;
+    }
+    .col-lg-middle {
+        vertical-align: middle;
+    }
+    .col-lg-bottom {
+        vertical-align: bottom;
+    }
+}
+/*Fix Columnas igual tamaño*/
+/* --------------------------------------*/
+
+/*Menus responsive*/
+#departamentos select {
+display: none;
+}
+
+@media (max-width: 960px) {
+    #departamentos a    { display: none; }
+    #departamentos select{
+        display: inline-block;
+        align-content: center;
+        margin: 0 auto;
+    }
+}
+/*Menus responsive*/
+
+/*para agregar efecto caja redondeada reportes*/
+
+.stitched {
+    padding: 20px;
+    margin: 10px;
+    background: #fdf5e6;
+    font-size: 21px;
+    color:inherit;
+    line-height: 1.3em;
+    border: 2px dashed #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 0 4px #ffdead, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
+    font-weight: normal;
+    word-wrap: break-word;
+}
+.stitched:after {
+    content: '';
+    clear: both;
+    visibility: hidden;
+}
+.imagenDesaparecido{
+    float:left;
+    margin: 10px;
+}
+
+.textoDesaparecido{
+    overflow: hidden;
+}
+
+.stitched hr{
+    border: 0;
+    border-bottom: 1px dashed #ccc;
+    background: #999;
+}
+/*Sub menus panel admin*/
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover>.dropdown-menu {
+    display: block;
+}
+
+.dropdown-submenu>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #ccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+
+.dropdown-submenu:hover>a:after {
+    border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+    float: none;
+}
+
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+/*Sub menus panel admin*/

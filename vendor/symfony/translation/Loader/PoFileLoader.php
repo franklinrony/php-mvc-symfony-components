@@ -11,12 +11,47 @@
 
 namespace Symfony\Component\Translation\Loader;
 
+use Symfony\Component\Translation\Exception\InvalidResourceException;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
+use Symfony\Component\Config\Resource\FileResource;
+
 /**
  * @copyright Copyright (c) 2010, Union of RAD http://union-of-rad.org (http://lithify.me/)
  * @copyright Copyright (c) 2012, Clemens Tolboom
  */
-class PoFileLoader extends FileLoader
+class PoFileLoader extends ArrayLoader
 {
+    public function load($resource, $locale, $domain = 'messages')
+    {
+        if (!stream_is_local($resource)) {
+            throw new InvalidResourceException(sprintf('This is not a local file "%s".', $resource));
+        }
+
+        if (!file_exists($resource)) {
+            throw new NotFoundResourceException(sprintf('File "%s" not found.', $resource));
+        }
+
+        $messages = $this->parse($resource);
+
+        // empty file
+        if (null === $messages) {
+            $messages = array();
+        }
+
+        // not an array
+        if (!is_array($messages)) {
+            throw new InvalidResourceException(sprintf('The file "%s" must contain a valid po file.', $resource));
+        }
+
+        $catalogue = parent::load($messages, $locale, $domain);
+
+        if (class_exists('Symfony\Component\Config\Resource\FileResource')) {
+            $catalogue->addResource(new FileResource($resource));
+        }
+
+        return $catalogue;
+    }
+
     /**
      * Parses portable object (PO) format.
      *
@@ -58,31 +93,33 @@ class PoFileLoader extends FileLoader
      *
      * Items with an empty id are ignored.
      *
-     * {@inheritdoc}
+     * @param resource $resource
+     *
+     * @return array
      */
-    protected function loadResource($resource)
+    private function parse($resource)
     {
         $stream = fopen($resource, 'r');
 
-        $defaults = [
-            'ids' => [],
+        $defaults = array(
+            'ids' => array(),
             'translated' => null,
-        ];
+        );
 
-        $messages = [];
+        $messages = array();
         $item = $defaults;
-        $flags = [];
+        $flags = array();
 
         while ($line = fgets($stream)) {
             $line = trim($line);
 
             if ('' === $line) {
                 // Whitespace indicated current item is done
-                if (!\in_array('fuzzy', $flags)) {
+                if (!in_array('fuzzy', $flags)) {
                     $this->addMessage($messages, $item);
                 }
                 $item = $defaults;
-                $flags = [];
+                $flags = array();
             } elseif ('#,' === substr($line, 0, 2)) {
                 $flags = array_map('trim', explode(',', substr($line, 2)));
             } elseif ('msgid "' === substr($line, 0, 7)) {
@@ -96,7 +133,7 @@ class PoFileLoader extends FileLoader
             } elseif ('"' === $line[0]) {
                 $continues = isset($item['translated']) ? 'translated' : 'ids';
 
-                if (\is_array($item[$continues])) {
+                if (is_array($item[$continues])) {
                     end($item[$continues]);
                     $item[$continues][key($item[$continues])] .= substr($line, 1, -1);
                 } else {
@@ -110,7 +147,7 @@ class PoFileLoader extends FileLoader
             }
         }
         // save last item
-        if (!\in_array('fuzzy', $flags)) {
+        if (!in_array('fuzzy', $flags)) {
             $this->addMessage($messages, $item);
         }
         fclose($stream);
@@ -126,7 +163,7 @@ class PoFileLoader extends FileLoader
      */
     private function addMessage(array &$messages, array $item)
     {
-        if (\is_array($item['translated'])) {
+        if (is_array($item['translated'])) {
             $messages[stripcslashes($item['ids']['singular'])] = stripcslashes($item['translated'][0]);
             if (isset($item['ids']['plural'])) {
                 $plurals = $item['translated'];
