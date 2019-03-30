@@ -16,6 +16,8 @@
     "bramus/router": "~1.4",
     "robmorgan/phinx": "^0.10.6",
     "twig/twig": "^1.0",
-    "symfony/http-foundation": "^3.4"
+    "symfony/http-foundation": "^3.4",
+    "propel/propel": "~2.0@dev"
+
   }
 }
